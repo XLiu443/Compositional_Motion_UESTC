@@ -276,7 +276,7 @@ class UESTC(Dataset):
         print("arm actions", arm_actions)
 #        leg_mask = torch.tensor([0.1, 0.8, 0.8, 0.1, 0.8, 0.8, 0.1, 0.9, 0.9, 0.1, 1, 1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
 #        arm_mask = torch.tensor([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.8, 0.8, 0.1, 0.8, 0.8, 0.8, 0.8, 0.9, 0.9, 1, 1])
-        leg_mask = torch.ones(24) 
+        leg_mask = torch.ones(24)
         arm_mask = torch.ones(24)
 
         human12_actionmask = {}
@@ -294,18 +294,18 @@ class UESTC(Dataset):
      #   ipdb.set_trace()
         new_tensor = torch.tensor((), dtype=torch.float64)
         new_tensor2 = torch.tensor((), dtype=torch.int64)
-        self.compose_poses = new_tensor.new_zeros((200*25, 60, 24, 6))
-        self.compose_labels = new_tensor2.new_zeros((200*25, 1))
+        self.compose_poses = new_tensor.new_zeros((50*25, 60, 24, 6))
+        self.compose_labels = new_tensor2.new_zeros((50*25, 1))
         
         action_dataindices = {}
         np.random.seed(1000) 
         for i in selected_actions:
             choices = action_dataindex[i]
             if i<10:     
-                dataindices = np.random.choice(choices, 10, replace=False)
+                dataindices = np.random.choice(choices, 5, replace=False)
                 action_dataindices[i] = dataindices
             else:
-                dataindices = np.random.choice(choices, 10, replace=False) 
+                dataindices = np.random.choice(choices, 5, replace=False) 
                 action_dataindices[i] = dataindices   
         print("action_dataindex", action_dataindices)        
 
@@ -331,10 +331,10 @@ class UESTC(Dataset):
                     video2 = self._get_item_data_index(self._train[ind2])[0]
                     new_sequence1 = video_combine(human12_actionmask, video1, video2, action1, action2, alpha1)
                     new_sequence2 = video_combine(human12_actionmask, video1, video2, action1, action2, alpha2)
-                    self.compose_poses[count+i*200] = new_sequence1
-                    self.compose_poses[count+1+i*200] = new_sequence2
-                    self.compose_labels[count+i*200] = i+40
-                    self.compose_labels[count+1+i*200] = i+40
+                    self.compose_poses[count+i*50] = new_sequence1
+                    self.compose_poses[count+1+i*50] = new_sequence2
+                    self.compose_labels[count+i*50] = i+40
+                    self.compose_labels[count+1+i*50] = i+40
                     self.compose_alphas.append(alpha1)
                     self.compose_alphas.append(alpha2)
                     self.compose_video1.append(video1)
@@ -352,7 +352,7 @@ class UESTC(Dataset):
         print("length on selected 10 classes:", len(self.new_train_indices))
         self.compose_alphas = torch.tensor(self.compose_alphas)
         print("alphas:", self.compose_alphas)
-        newnum = len(self.new_train_indices) + 200*25
+        newnum = len(self.new_train_indices) + 50*25
         self.new_train = list(range(newnum))
 
 
